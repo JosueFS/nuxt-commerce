@@ -34,8 +34,16 @@ export const useProductStore = defineStore("ProductStore", {
   },
   actions: {
     async fetchProducts() {
-      const res = await $fetch("/api/products");
-      this.products = res;
+      //Fetching local data from JSON file
+      // const res = await $fetch("/api/products");
+      // this.products = res;
+      const { $contentful } = useNuxtApp();
+      const entries = await $contentful.getEntries({
+        content_type: "product"
+      });
+
+      this.products = entries.items;
+
       return this.products;
     },
     async fetchProduct(id) {
