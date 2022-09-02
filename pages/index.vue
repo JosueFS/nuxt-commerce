@@ -11,7 +11,7 @@ useAsyncData("products", async () => productStore.fetchProducts());
       <ProductFilters />
     </div>
 
-    <transition-group
+    <TransitionGroup
       v-if="productStore.products"
       name="products"
       tag="div"
@@ -33,16 +33,16 @@ useAsyncData("products", async () => productStore.fetchProducts());
         v-for="product in productStore.products"
         :key="product.sys.id"
         :product="product"
-        class="mb-5 product"
+        class="mb-5"
       />
-    </transition-group>
+    </TransitionGroup>
   </div>
 </template>
 
 <style scoped>
 /* Animations */
-.product {
-  transition: all 0.35s ease-in-out;
+.product-card {
+  transition: all 0.5s ease-in-out;
 }
 .products-enter {
   transform: scale(0.5) translatey(-80px);
