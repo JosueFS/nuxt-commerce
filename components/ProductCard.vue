@@ -19,18 +19,25 @@ defineProps<{
           :alt="product.fields.image[0].fields?.file.description"
         />
       </figure>
-      <div class="card-body">
-        <h2 class="justify-between flex">
-          <span class="w-3/5"> {{ product.fields.name }} </span>
-          <small class="w-2/5 p-1 badge badge-outline">
-            <ProductPrice :price="product.fields.price" />
-          </small>
-        </h2>
-        <p
-          class="text-sm max-h-5 overflow-ellipsis overflow-hidden whitespace-nowrap"
-        >
-          {{ product.fields.summary }}
-        </p>
+      <div class="card-body justify-between">
+        <div>
+          <h2 class="justify-between flex">
+            <span class="w-3/5"> {{ product.fields.name }} </span>
+            <small class="w-2/5 p-1 badge badge-outline">
+              <ProductPrice :price="product.fields.price" />
+            </small>
+          </h2>
+          <p
+            class="
+              text-sm
+              max-h-5
+              overflow-ellipsis overflow-hidden
+              whitespace-nowrap
+            "
+          >
+            {{ product.fields.summary }}
+          </p>
+        </div>
         <div class="card-actions justify-center mt-3">
           <button class="btn btn-primary">View Item</button>
         </div>
