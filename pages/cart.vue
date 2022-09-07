@@ -4,6 +4,13 @@ const cartStore = useCartStore();
 const selected = ref([]);
 const checkAll = ref();
 
+function handleSelectAllItems(e) {
+  if (e.target.checked) {
+    selected.value = cartStore.items.map((item) => item.sys.id);
+  } else {
+    selected.value = [];
+  }
+}
 
 function removeSelectedItems() {
   for (const id of selected.value) {
@@ -34,7 +41,12 @@ async function handleCheckout() {
                 <tr>
                   <th>
                     <label>
-                      <input type="checkbox" class="checkbox" ref="checkAll" />
+                      <input
+                        type="checkbox"
+                        class="checkbox"
+                        ref="checkAll"
+                        @change="handleSelectAllItems"
+                      />
                     </label>
                   </th>
                   <th></th>
