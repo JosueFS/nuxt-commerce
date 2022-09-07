@@ -45,13 +45,13 @@ export const useCartStore = defineStore("CartStore", {
   },
 
   actions: {
-    addToCart(item: Item) {
+    addToCart(item: Item, amount: number) {
       const existingItem = this.items.find((i) => i.sys.id === item.sys.id);
 
       if (existingItem) {
         existingItem.amount++;
       } else {
-        this.items.push({ ...item, amount: 1 });
+        this.items.push({ ...item, amount });
       }
     },
     removeFromCart(itemId: string) {
