@@ -1,3 +1,6 @@
+import { Ref } from "vue";
+import { defineStore, acceptHMRUpdate } from "pinia";
+
 interface Item {
   sys: {
     id: string;
@@ -21,49 +24,55 @@ interface ItemImage {
   };
 }
 
-export const useCartStore = defineStore("CartStore", {
-  state: () => ({
-    items: [] as Item[],
-  }),
+export const useCartStore = defineStore("CartStore", () => {
+  //state
+  const items = ref([]) as Ref<[Item]>;
+  const taxRate = 0.1;
 
-  getters: {
-    itemsAmount(state) {
-      return state.items.reduce((acc, item) => acc + item.amount, 0);
-    },
-    subTotal(state) {
-      return state.items.reduce(
-        (acc, item) => acc + item.fields.price * item.amount,
-        0
-      );
-    },
-    taxTotal(): number {
-      return this.subTotal * 0.1;
-    },
-    total(): number {
-      return this.subTotal + this.taxTotal;
-    },
-  },
+  //getters
+  const itemsAmount = computed(() =>
+    items.value.reduce((acc, item) => acc + item.amount, 0)
+  );
+  const subTotal = computed(() => {
+    return items.value.reduce(
+      (acc, item) => item.fields.price * item.amount + acc,
+      0
+    );
+  });
+  const taxTotal = computed(() => subTotal.value * taxRate);
+  const total = computed(() => subTotal.value + taxTotal.value);
 
-  actions: {
-    addToCart(item: Item, amount: number) {
-      const existingItem = this.items.find((i) => i.sys.id === item.sys.id);
+  //actions
+  function addToCart(item: Item, amount: number) {
+    const existingItem = items.value.find((i) => i.sys.id === item.sys.id);
 
-      if (existingItem) {
-        existingItem.amount++;
-      } else {
-        this.items.push({ ...item, amount });
-      }
-    },
-    removeFromCart(itemId: string) {
-      const index = this.items.findIndex((item) => item.sys.id === itemId);
+    if (existingItem) {
+      existingItem.amount++;
+    } else {
+      items.value.push({ ...item, amount });
+    }
+  }
 
-      if (index > -1) {
-        this.items.splice(index, 1);
-      }
-    },
-  },
+  function removeFromCart(itemId: string) {
+    const index = items.value.findIndex((item) => item.sys.id === itemId);
+
+    if (index > -1) {
+      items.value.splice(index, 1);
+    }
+  }
+
+  return {
+    items,
+    taxRate,
+    itemsAmount,
+    subTotal,
+    taxTotal,
+    total,
+    addToCart,
+    removeFromCart,
+  };
 });
 
 if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(useAlertsStore, import.meta.hot));
+  import.meta.hot.accept(acceptHMRUpdate(useCartStore, import.meta.hot));
 }
