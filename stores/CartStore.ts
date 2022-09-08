@@ -1,4 +1,5 @@
 import { Ref } from "vue";
+import { watchDebounced } from "@vueuse/core";
 import { defineStore, acceptHMRUpdate } from "pinia";
 
 interface Item {
@@ -28,6 +29,28 @@ export const useCartStore = defineStore("CartStore", () => {
   //state
   const items = ref([]) as Ref<[Item]>;
   const taxRate = 0.1;
+  const deskree = useDeskree();
+  const isFirstLoad = ref(true);
+
+  watchDebounced(
+    items,
+    () => {
+      if (!isFirstLoad.value) {
+        deskree.user.updateCart(items.value);
+      }
+    },
+    { deep: true, debounce: 500 }
+  );
+
+  deskree.auth.onAuthStateChange(async (user) => {
+    isFirstLoad.value = true;
+    if (!user) return;
+
+    const res = await deskree.user.getCart();
+    items.value = res.products;
+    //Reason watchDebounce waits 500ms to make request
+    setTimeout(() => (isFirstLoad.value = false), 700);
+  });
 
   //getters
   const itemsAmount = computed(() =>
